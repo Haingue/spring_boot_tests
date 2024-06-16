@@ -1,0 +1,23 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+networks:
+  pulsar:
+    driver: bridge
+
+services:
+  # Start database
+  postgres-db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 5432:5432
+  # Start database viewer
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9080:8080
