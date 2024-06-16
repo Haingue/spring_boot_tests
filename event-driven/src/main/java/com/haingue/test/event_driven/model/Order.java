@@ -5,13 +5,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
 public class Order {
         @Id
-        UUID id;
+        String id;
         String owner;
         double amount;
         Instant creationDatetime;
@@ -19,11 +18,43 @@ public class Order {
         public Order() {
         }
 
-        public UUID getId() {
+        public static class Builder {
+
+                String id;
+                String owner;
+                double amount;
+                Instant creationDatetime;
+                public Builder id (String id) {
+                        this.id = id;
+                        return this;
+                }
+                public Builder owner (String owner) {
+                        this.owner = owner;
+                        return this;
+                }
+                public Builder amount (double amount) {
+                        this.amount = amount;
+                        return this;
+                }
+                public Builder creationDatetime (Instant creationDatetime) {
+                        this.creationDatetime = creationDatetime;
+                        return this;
+                }
+                public Order build() {
+                        Order order = new Order();
+                        order.id = this.id;
+                        order.owner = this.owner;
+                        order.amount = this.amount;
+                        order.creationDatetime = this.creationDatetime;
+                        return order;
+                }
+        }
+
+        public String getId() {
                 return id;
         }
 
-        public void setId(UUID id) {
+        public void setId(String id) {
                 this.id = id;
         }
 
