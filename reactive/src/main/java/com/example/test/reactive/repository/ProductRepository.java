@@ -9,7 +9,7 @@ import reactor.core.publisher.Flux;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends R2dbcRepository<Product, UUID> {
+public interface ProductRepository extends ReactiveCrudRepository<Product, UUID> {
 
     Flux<Product> findByOwner (String owner);
 

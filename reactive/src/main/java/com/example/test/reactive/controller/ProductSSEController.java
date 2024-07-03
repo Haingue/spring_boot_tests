@@ -18,30 +18,28 @@ import java.time.Duration;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/service/product")
-public class ProductController {
+@RequestMapping("/service/sse/product")
+public class ProductSSEController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductSSEController.class);
 
     @Resource
     private ProductCreationHandle productCreationHandle;
     @Resource
     private ProductService productService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
-    public Mono<Product> postProduct (@RequestBody Product newProduct) {
-        return productService.createProduct(newProduct);
-    }
-
-    @GetMapping
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Flux<Product> getProduct (@RequestParam(required = false) String owner) {
-        if (owner != null)
-            return productService.findAllByOwner(owner);
-        else
-            return productService.findAll();
-    }
+    public Flux<ServerSentEvent<Product>> getProductTest () {
+        Flux<ServerSentEvent<Product>> productProducer = productService.findAll()
+                .takeLast(1).map(product -> ServerSentEvent.<Product>builder()
+                        .id(UUID.randomUUID().toString())
+                        .event("product")
+                        .data(product)
+                        .build());
 
+        return Flux.merge(productProducer)
+                .delayElements(Duration.ofMillis(500))
+                .repeat();
+    }
 }
